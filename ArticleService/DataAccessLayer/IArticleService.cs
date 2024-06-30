@@ -11,5 +11,5 @@ public interface IArticleService
   public Task<Article> AddArticle(Article article);
   public Task UpdateArticle(Article article);
   public Task DeleteArticle(int id);
-  Task<List<Article>> GetArticles(string title, int StarCount);
+  Task<List<Article>> GetArticles(string? title, int? starCount);
 }

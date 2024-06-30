@@ -51,11 +51,25 @@ namespace ReviewService.DataAccessLayer
       await _context.SaveChangesAsync();
     }
 
-    public Task<List<Review>> GetReviews(string reviewer, int reviewCount, int articleId)
+    public Task<List<Review>> GetReviews(string? reviewer, int? reviewCount, int? articleId)
     {
-      return _context.Reviews.Where(r => r.Reviewer == reviewer && r.ArticleId == articleId)
-        .Take(reviewCount)
-        .ToListAsync();
+      var query = _context.Reviews.AsQueryable();
+      if (!string.IsNullOrEmpty(reviewer))
+      {
+        query = query.Where(r => r.Reviewer == reviewer);
+      }
+
+      if (articleId != null)
+      {
+        query = query.Where(r => r.ArticleId == articleId);
+      }
+
+      if (reviewCount != null)
+      {
+        query = query.Take(reviewCount.Value);
+      }
+
+      return query.ToListAsync();
     }
   }
 }

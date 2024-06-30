@@ -52,9 +52,19 @@ public class ArticleService : IArticleService
     await _context.SaveChangesAsync();
   }
 
-  public Task<List<Article>> GetArticles(string title, int StarCount)
+  public Task<List<Article>> GetArticles(string? title, int? starCount)
   {
-    return _context.Articles.Where(a => a.Title == title && a.StarCount == StarCount)
-      .ToListAsync();
+    var articles = _context.Articles.AsQueryable();
+    if (!string.IsNullOrEmpty(title))
+    {
+      articles = articles.Where(a => a.Title.Contains(title));
+    }
+
+    if (starCount.HasValue)
+    {
+      articles = articles.Where(a => a.StarCount == starCount);
+    }
+
+    return articles.ToListAsync();
   }
 }

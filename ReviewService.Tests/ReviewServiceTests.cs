@@ -17,7 +17,7 @@ namespace ReviewService.Tests
     public ReviewServiceTests()
     {
       _mockReviewService = new Mock<IReviewService>();
-      _controller = new ReviewsController(null, null, _mockReviewService.Object);
+      _controller = new ReviewsController(null, null, _mockReviewService.Object, null);
     }
 
     [Fact]

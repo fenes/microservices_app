@@ -115,3 +115,7 @@ TestOutput/
 
 # Additional OS files
 *.swp
+
+
+# db config folder 
+init-db/

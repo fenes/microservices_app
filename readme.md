@@ -50,7 +50,6 @@ To get started with this project, you will need:
 - **Redis**: In-memory data structure store for caching.
 - **Docker**: Platform for containerizing the application.
 - **Swagger**: Tool for API documentation.
-- **RestSharp**: HTTP client library for RESTful APIs.
 
 ## Setup and Installation
 

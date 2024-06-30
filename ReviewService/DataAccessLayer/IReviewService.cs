@@ -11,6 +11,6 @@ namespace ReviewService.DataAccessLayer
     Task<Review> AddReview(Review review);
     Task UpdateReview(Review review);
     Task DeleteReview(int id);
-    Task<List<Review>> GetReviews(string reviewer, int reviewCount, int articleId);
+    Task<List<Review>> GetReviews(string? reviewer, int? reviewCount, int? articleId);
   }
 }

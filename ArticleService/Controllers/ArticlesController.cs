@@ -7,7 +7,7 @@ using StackExchange.Redis;
 
 namespace ArticleService.Controllers
 {
-  [Route("api/[controller]")]
+  [Route("[controller]")]
   [ApiController]
   public class ArticlesController : ControllerBase
   {
@@ -72,15 +72,9 @@ namespace ArticleService.Controllers
     }
 
     [HttpGet]
-    public async Task<ActionResult<Article>> GetArticles()
+    public async Task<ActionResult<Article>> GetArticles(string? title, int? starCount)
     {
-      return Ok(await _articleService.GetArticles());
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<Article>> GetArticles(string title, int StarCount)
-    {
-      return Ok(await _articleService.GetArticles(title, StarCount));
+      return Ok(await _articleService.GetArticles(title, starCount));
     }
   }
 }

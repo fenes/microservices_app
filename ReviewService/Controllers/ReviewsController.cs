@@ -1,36 +1,51 @@
+using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using ReviewService.DataAccessLayer;
 using ReviewService.Models;
 using StackExchange.Redis;
 
 namespace ReviewService.Controllers
 {
-  [Route("api/[controller]")]
+  [Route("[controller]")]
   [ApiController]
   public class ReviewsController : ControllerBase
   {
     private readonly IDatabase _cache;
     private readonly HttpClient _httpClient;
     private readonly IReviewService _reviewService;
+    private readonly string articleServiceUrl;
+    private readonly IConfiguration _config;
+
 
     public ReviewsController(IConnectionMultiplexer redis, IHttpClientFactory httpClientFactory,
-      IReviewService reviewService)
+      IReviewService reviewService, IConfiguration config)
     {
       _reviewService = reviewService;
+      _config = config;
       _cache = redis.GetDatabase();
       _httpClient = httpClientFactory.CreateClient();
+      //get appsettings ProjectConfig:ArticleServiceUrl
+      articleServiceUrl = _config.GetSection("ProjectConfig").GetValue<string>("ArticleServiceUrl");
     }
 
     [HttpPost]
     public async Task<ActionResult<Review>> AddReview(Review review)
     {
-      var response = await _httpClient.GetAsync($"http://article-service/api/articles/{review.ArticleId}");
-      if (!response.IsSuccessStatusCode)
+      try
       {
-        return BadRequest("Invalid Article ID");
+        var response = await _httpClient.GetAsync($"{articleServiceUrl}/{review.ArticleId}");
+        if (!response.IsSuccessStatusCode)
+        {
+          return BadRequest("Invalid Article ID");
+        }
+      }
+      catch (Exception e)
+      {
+        return BadRequest("Article Service is not available");
       }
 
       await _reviewService.AddReview(review);
@@ -81,13 +96,7 @@ namespace ReviewService.Controllers
     }
 
     [HttpGet]
-    public async Task<ActionResult<Review>> GetReviews()
-    {
-      return Ok(await _reviewService.GetReviews());
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<Review>> GetReviews(string reviewer, int reviewCount, int articleId)
+    public async Task<ActionResult<Review>> GetReviews(string? reviewer, int? reviewCount, int? articleId)
     {
       return Ok(await _reviewService.GetReviews(reviewer, reviewCount, articleId));
     }
