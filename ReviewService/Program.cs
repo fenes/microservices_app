@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ReviewService.Data;
+using ReviewService.DataAccessLayer;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,9 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Conn
 builder.Services.AddHttpClient();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Add the IReviewService service to the container
+builder.Services.AddScoped<IReviewService, ReviewService.DataAccessLayer.ReviewService>();
 
 var app = builder.Build();
 

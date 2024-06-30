@@ -1,7 +1,7 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/articles/{everything}",
+      "DownstreamPathTemplate": "/articles/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -9,7 +9,7 @@
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/articles/{everything}",
+      "UpstreamPathTemplate": "/articles/{everything}",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -18,7 +18,7 @@
       ]
     },
     {
-      "DownstreamPathTemplate": "/api/reviews/{everything}",
+      "DownstreamPathTemplate": "/reviews/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -26,7 +26,7 @@
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/reviews/{everything}",
+      "UpstreamPathTemplate": "/reviews/{everything}",
       "UpstreamHttpMethod": [
         "Get",
         "Post",

@@ -1,55 +1,86 @@
+using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ArticleService.Data;
+using ArticleService.DataAccessLayer;
 using ArticleService.Models;
+using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
 
 namespace ArticleService.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ArticlesController : ControllerBase
+  [Route("api/[controller]")]
+  [ApiController]
+  public class ArticlesController : ControllerBase
+  {
+    private readonly IArticleService _articleService;
+    private readonly IDatabase _cache;
+
+    public ArticlesController(IConnectionMultiplexer redis, IArticleService articleService)
     {
-        private readonly ArticleContext _context;
-        private readonly IDatabase _cache;
-
-        public ArticlesController(ArticleContext context, IConnectionMultiplexer redis)
-        {
-            _context = context;
-            _cache = redis.GetDatabase();
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Article>> GetArticle(int id)
-        {
-            var cacheKey = $"article-{id}";
-            var cachedArticle = await _cache.StringGetAsync(cacheKey);
-
-            if (!cachedArticle.IsNullOrEmpty)
-            {
-                return Ok(System.Text.Json.JsonSerializer.Deserialize<Article>(cachedArticle));
-            }
-
-            var article = await _context.Articles.FindAsync(id);
-
-            if (article == null)
-            {
-                return NotFound();
-            }
-
-            await _cache.StringSetAsync(cacheKey, System.Text.Json.JsonSerializer.Serialize(article));
-            return article;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<Article>> PostArticle(Article article)
-        {
-            _context.Articles.Add(article);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetArticle), new { id = article.Id }, article);
-        }
-
-        // Diğer CRUD operasyonları buraya eklenebilir
+      _articleService = articleService;
+      _cache = redis.GetDatabase();
     }
+
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Article>> GetArticle(int id)
+    {
+      var cacheKey = $"article-{id}";
+      var cachedArticle = await _cache.StringGetAsync(cacheKey);
+
+      if (!cachedArticle.IsNullOrEmpty)
+      {
+        return Ok(JsonSerializer.Deserialize<Article>(cachedArticle));
+      }
+
+      var article = await _articleService.GetArticle(id);
+
+      if (article == null)
+      {
+        return NotFound();
+      }
+
+      await _cache.StringSetAsync(cacheKey, JsonSerializer.Serialize(article));
+      return article;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Article>> AddArticle(Article article)
+    {
+      await _articleService.AddArticle(article);
+      return CreatedAtAction(nameof(GetArticle), new { id = article.Id }, article);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateArticle(int id, Article article)
+    {
+      if (id != article.Id)
+      {
+        return BadRequest();
+      }
+
+      await _articleService.UpdateArticle(article);
+      await _cache.KeyDeleteAsync($"article-{id}");
+      return Ok();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteArticle(int id)
+    {
+      await _articleService.DeleteArticle(id);
+      await _cache.KeyDeleteAsync($"article-{id}");
+      return Ok();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<Article>> GetArticles()
+    {
+      return Ok(await _articleService.GetArticles());
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<Article>> GetArticles(string title, int StarCount)
+    {
+      return Ok(await _articleService.GetArticles(title, StarCount));
+    }
+  }
 }
