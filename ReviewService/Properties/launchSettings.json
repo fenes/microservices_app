@@ -7,7 +7,7 @@
     "ReviewService": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:2850",
+      "applicationUrl": "http://localhost:5002",
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
