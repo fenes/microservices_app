@@ -1,0 +1,117 @@
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+bin/
+obj/
+out/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.config
+*.csproj.user
+*.csproj.nuget.g.props
+*.csproj.nuget.g.targets
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Mono Auto Generated Files
+mono_crash.*
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Temporary files
+*.tmp
+*.temp
+~$*
+
+# Web.config / Transformation
+web.config.transform
+web.Debug.config
+web.Release.config
+web.*.config
+
+# Docker
+**/[Dd]ockerfile*
+**/[Dd]ocker-*.yml
+**/[Dd]ocker-compose.*.yml
+
+# Rider
+.idea/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Temporary files
+.Spotlight-V100
+.Trashes
+
+# Binaries
+*.bak
+*.old
+*.swo
+*.swp
+
+# Visual Studio for Mac
+.vscode/
+.vscode/**/csharp.*
+.vscode/**/omnisharp.*
+
+# EntityFramework
+migrations/
+
+# Logs
+logs
+*.log
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+# Test results
+TestResults/
+*.TestResults/
+TestOutput/
+
+# VS Code
+.vscode/
+.history/
+
+# Visual Studio Mac
+.vs/
+
+# Rider
+.idea/
+
+# Local history for IntelliJ-based IDEs
+.idea_local_history/
+
+# JetBrains Rider
+.idea/
+
+# Rider
+.idea/
+
+# Additional OS files
+*.swp
