@@ -69,14 +69,18 @@ docker-compose up
 
 ### 3. Apply Migrations
 
-Migrations are applied automatically at runtime. Ensure that `Program.cs` in both `ArticleService` and `ReviewService` contains:
+Before running the application, you need to apply the database migrations. Run the following commands in the respective service directories:
 
-```csharp
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<YourDbContext>();
-    dbContext.Database.Migrate();
-}
+```bash
+# For Article Service
+cd ArticleService
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+
+# For Review Service
+cd ReviewService
+dotnet ef migrations add InitialCreate
+dotnet ef database update
 ```
 
 ### 4. Access the Services
@@ -116,7 +120,21 @@ docker-compose.test.yml up
 
 ## Caching
 
-Redis is used to cache frequently read data in both services to improve performance.
+Redis is used to cache frequently read data in both services to improve performance. The caching implementation follows these principles:
+- Centralized Redis management through a shared Redis service
+- Consistent caching patterns across services
+- Configurable cache duration and invalidation strategies
+- Proper error handling and fallback mechanisms
+
+The caching layer is implemented using the following pattern:
+```csharp
+public interface ICacheService<T>
+{
+    Task<T> GetOrSetAsync(string key, Func<Task<T>> factory, TimeSpan? expiration = null);
+    Task RemoveAsync(string key);
+    Task RemoveByPatternAsync(string pattern);
+}
+```
 
 ## Contributing
 

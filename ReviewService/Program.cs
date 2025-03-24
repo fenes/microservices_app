@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ReviewService.Data;
 using ReviewService.DataAccessLayer;
+using ReviewService.Services;
+using ReviewService.Models.DTOs;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +18,9 @@ builder.Services.AddDbContext<ReviewContext>(options =>
   options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddSingleton<IConnectionMultiplexer>(
   ConnectionMultiplexer.Connect(builder.Configuration["Redis:Configuration"]));
+builder.Services.AddScoped<ICacheService<ReviewDto>, RedisCacheService<ReviewDto>>();
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<IArticleServiceClient, ArticleServiceClient>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

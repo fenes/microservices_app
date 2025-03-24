@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using ArticleService.Data;
 using ArticleService.DataAccessLayer;
+using ArticleService.Services;
+using ArticleService.Models.DTOs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,7 @@ builder.Services.AddDbContext<ArticleContext>(options =>
   options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddSingleton<IConnectionMultiplexer>(
   ConnectionMultiplexer.Connect(builder.Configuration["Redis:Configuration"]));
+builder.Services.AddScoped<ICacheService<ArticleDto>, RedisCacheService<ArticleDto>>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
